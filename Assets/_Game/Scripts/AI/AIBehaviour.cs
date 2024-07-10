@@ -9,12 +9,10 @@ namespace Game
     [RequireComponent(typeof(NavMeshAgent))]
     public class AIBehaviour : MovementInfo
     {
-        public override bool IsMoving => _agent.velocity.magnitude > 0.01f;
-        public override Vector3 MoveDirection => _agent.velocity;
+        public override bool IsMoving => _agent.velocity.magnitude >= 0.01f;
+        public override Vector3 MoveDirection => -_agent.velocity;
 
         protected NavMeshAgent _agent;
-
-        private Coroutine _movingCoroutine;
 
         private Tweener _lookAtTweener;
 
@@ -25,6 +23,7 @@ namespace Game
 
         public override void DisableMovement()
         {
+            StopAllCoroutines();
             _agent.enabled = false;
         }
 
@@ -39,54 +38,37 @@ namespace Game
             _lookAtTweener = transform.DOLookAt(pos, duration);
         }
 
-        public void MoveTo(Vector3 pos, Action onComplete = null)
+        protected IEnumerator Moving(Vector3 pos, int areaMask = NavMesh.AllAreas)
         {
-            if (_agent.enabled == false)
-                return;
-
-            if (_movingCoroutine != null)
-                StopCoroutine(_movingCoroutine);
+            if (_agent.isOnNavMesh == false)
+                yield break;
 
             _lookAtTweener.KillIfActiveAndPlaying();
-            _movingCoroutine = StartCoroutine(Moving(pos, onComplete));
-        }
 
-        public void FollowTarget(Transform target)
-        {
-            if (_agent.enabled == false)
-                return;
-            
-            if (_movingCoroutine != null)
-                StopCoroutine(_movingCoroutine);
-
-            _lookAtTweener.KillIfActiveAndPlaying();
-            _movingCoroutine = StartCoroutine(Following(target));
-        }
-        
-        private IEnumerator Moving(Vector3 pos, Action onComplete)
-        {
             Vector3 samplePos = pos;
 
             NavMeshHit hit;
-            if (NavMesh.SamplePosition(pos, out hit, 10f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(pos, out hit, 50f, 1 << areaMask))
                 samplePos = hit.position;
 
             _agent.SetDestination(samplePos);
 
-            yield return new WaitUntil(() => Vector3.Distance(transform.position, samplePos) <= _agent.stoppingDistance + 0.35f);
+            //yield return StartCoroutine(WaitingForAgent());
+            yield return null;//for calculate path
+            yield return new WaitUntil(() => _agent.remainingDistance <= _agent.stoppingDistance);
 
             _agent.SetDestination(transform.position);
-
-            onComplete?.Invoke();
         }
 
-        private IEnumerator Following(Transform target)
+        protected IEnumerator Following(Transform target, int areaMask = NavMesh.AllAreas)
         {
+            _lookAtTweener.KillIfActiveAndPlaying();
+
             while (enabled)
             {
                 Vector3 samplePos = target.position;
 
-                if (NavMesh.SamplePosition(target.position, out NavMeshHit hit, 10f, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(target.position, out NavMeshHit hit, 50f, 1 << areaMask))
                     samplePos = hit.position;
 
                 _agent.SetDestination(samplePos);
@@ -94,5 +76,6 @@ namespace Game
                 yield return new WaitForSeconds(0.1f);
             }
         }
+
     }
 }

@@ -8,33 +8,31 @@ namespace Game
     public class AnimalField : MonoBehaviour
     {
         public event Action OnGrassAreaCountChanged;
-        public int GrassAreaCount => _spawnedGrassAreas.Count;
+        public List<GrassArea> GrassAreas { get; private set; } = new List<GrassArea>();
 
-        [field: SerializeField] RandomPointZone _randomPointZone;
+        [field: SerializeField] public RandomPointZone RandomPointZone { get; private set; }
 
         [SerializeField] GrassArea _grassAreaPrefab;
 
         [SerializeField] int _maxGrassAreas = 20;
 
-        private List<GrassArea> _spawnedGrassAreas = new List<GrassArea>();
-
         [Button] public void TrySpawnGrassArea()
         {
-            if (_spawnedGrassAreas.Count >= _maxGrassAreas)
+            if (GrassAreas.Count >= _maxGrassAreas)
                 return;
 
-            Vector3 pos = _randomPointZone.GetRandomPointInArea();
+            Vector3 pos = RandomPointZone.GetRandomPointInArea();
 
             GrassArea spawnedGrassArea = Instantiate(_grassAreaPrefab, pos, Quaternion.identity, transform);
             spawnedGrassArea.OnEaten += RemoveGrassArea;
 
-            _spawnedGrassAreas.Add(spawnedGrassArea);
+            GrassAreas.Add(spawnedGrassArea);
             OnGrassAreaCountChanged?.Invoke();
         }
 
         private void RemoveGrassArea(GrassArea grassArea)
         {
-            _spawnedGrassAreas.Remove(grassArea);
+            GrassAreas.Remove(grassArea);
             OnGrassAreaCountChanged?.Invoke();
         }
     }
