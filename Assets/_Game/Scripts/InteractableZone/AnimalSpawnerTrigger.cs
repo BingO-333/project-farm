@@ -62,7 +62,7 @@ namespace Game
 
             yield return new WaitForSeconds(_interactingDuration);
 
-            if (_moneyManager.Money >= _cost)
+            if (_moneyManager.TryTakeMoney(_cost))
             {
                 AnimalBehaviour spawnedAnimal = Instantiate(_animalPrefab, transform.position, Quaternion.identity);
                 spawnedAnimal.Setup(_animalField);

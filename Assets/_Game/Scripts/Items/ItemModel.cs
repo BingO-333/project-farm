@@ -7,14 +7,26 @@ namespace Game
 	{
 		public ItemData Data { get; private set; }
 
-		public void Setup(ItemData itemData)
+        private Collider _collider;
+
+        private void Awake()
         {
-			Data = itemData;
+            _collider = GetComponent<Collider>();
         }
 
         private void OnEnable()
         {
             StartCoroutine(AutoDestroyInterval());
+        }
+
+        public void Setup(ItemData itemData)
+        {
+			Data = itemData;
+        }
+
+        public void DisableCollider()
+        {
+            _collider.enabled = false;
         }
 
         private IEnumerator AutoDestroyInterval()
