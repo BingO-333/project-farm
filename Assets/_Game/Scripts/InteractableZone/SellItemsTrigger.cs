@@ -56,10 +56,13 @@ namespace Game
             _reloadingTween = DOVirtual.Float(0, _reloadingDuration, _reloadingDuration, (value) =>
             {
                 _reloadingFillImage.fillAmount = Mathf.InverseLerp(0, _reloadingDuration, value);
-                _remainSecondsDisplay.text = Mathf.CeilToInt(value).ToString();
+                _remainSecondsDisplay.text = Mathf.CeilToInt(_reloadingDuration - value).ToString();
             })
                 .SetEase(Ease.Linear)
-                .OnComplete(() => _isReloading = false);
+                .OnComplete(() => {
+                    _isReloading = false;
+                    _remainSecondsDisplay.text = _reloadingDuration.ToString();
+                });
         }
 
         private IEnumerator Interacting(Player player)

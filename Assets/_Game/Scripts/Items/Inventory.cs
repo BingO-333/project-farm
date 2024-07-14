@@ -42,7 +42,7 @@ namespace Game
 
 		public bool GetItem(ItemData itemData, int count = 1)
         {
-			if (Items.ContainsKey(itemData) == false || count >= Items[itemData])
+			if (Items.ContainsKey(itemData) == false || count > Items[itemData])
 				return false;
 
 			Items[itemData] -= count;
