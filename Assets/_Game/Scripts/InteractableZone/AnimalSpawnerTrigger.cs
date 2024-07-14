@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,16 +12,26 @@ namespace Game
     {
         [SerializeField] float _interactingDuration = 1.5f;
         [SerializeField] int _cost = 20;
+        [SerializeField] int _maxAnimals = 10;
 
         [SerializeField] AnimalBehaviour _animalPrefab;
         [Space]
         [SerializeField] AnimalField _animalField;
         [SerializeField] Image _interactImageFill;
         [SerializeField] TextMeshProUGUI _costDisplay;
+        [SerializeField] TextMeshProUGUI _animalsCountDisplay;
+
+        private List<AnimalBehaviour> _spawnedAnimals = new List<AnimalBehaviour>();
 
         private Coroutine _interactingCoroutine;
 
         private Tweener _interactFillTweener;
+
+        private int _savedSpawnedAnimalsCount
+        {
+            get => PlayerPrefs.GetInt("SpawnedAnimals_" + name, 0);
+            set => PlayerPrefs.SetInt("SpawnedAnimals_" + name, value);
+        }
 
         [Inject] MoneyManager _moneyManager;
 
@@ -31,6 +42,11 @@ namespace Game
             _costDisplay.text = _cost.ToStringWithAbbreviations();
 
             _interactImageFill.fillAmount = 0;
+
+            for (int i = 0; i < _savedSpawnedAnimalsCount; i++)
+                TrySpawnAnimal(true);
+
+            _animalsCountDisplay.text = $"{_spawnedAnimals.Count}/{_maxAnimals}";
         }
 
         protected override void StartInteract(Player player)
@@ -53,6 +69,22 @@ namespace Game
             _interactFillTweener = _interactImageFill.DOFillAmount(0, 0.1f);
         }
 
+        private void TrySpawnAnimal(bool ignoreSaveCount = false)
+        {
+            if (_spawnedAnimals.Count < _maxAnimals && _moneyManager.TryTakeMoney(_cost))
+            {
+                AnimalBehaviour spawnedAnimal = Instantiate(_animalPrefab, transform.position, Quaternion.identity);
+                spawnedAnimal.Setup(_animalField);
+
+                _spawnedAnimals.Add(spawnedAnimal);
+
+                _animalsCountDisplay.text = $"{_spawnedAnimals.Count}/{_maxAnimals}";
+
+                if (ignoreSaveCount == false)
+                    _savedSpawnedAnimalsCount = _spawnedAnimals.Count;
+            }
+        }
+
         private IEnumerator Interacting(Player player)
         {
             yield return new WaitUntil(() => player.Movement.IsMoving == false);
@@ -62,11 +94,7 @@ namespace Game
 
             yield return new WaitForSeconds(_interactingDuration);
 
-            if (_moneyManager.TryTakeMoney(_cost))
-            {
-                AnimalBehaviour spawnedAnimal = Instantiate(_animalPrefab, transform.position, Quaternion.identity);
-                spawnedAnimal.Setup(_animalField);
-            }
+            TrySpawnAnimal();
 
             _interactFillTweener.KillIfActiveAndPlaying();
             _interactFillTweener = _interactImageFill.DOFillAmount(0, 0.1f);

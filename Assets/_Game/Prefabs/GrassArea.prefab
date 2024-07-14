@@ -45,7 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grassPrefabs:
+  - {fileID: 6313363224284700920, guid: 9b165749bbbbe9e478264126cef3d115, type: 3}
+  - {fileID: 6313363224284700920, guid: a1e059de28129654ebfbe67667773312, type: 3}
   - {fileID: 6313363224284700920, guid: 4e545b9e21ea40748aa0cc64ad52c740, type: 3}
-  _spawnRadius: 1
+  _spawnRadius: 0.7
   _health: 10
-  _grassCount: 35
+  _grassCount: 15

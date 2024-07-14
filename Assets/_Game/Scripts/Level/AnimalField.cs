@@ -10,7 +10,7 @@ namespace Game
         public event Action OnGrassAreaCountChanged;
         public List<GrassArea> GrassAreas { get; private set; } = new List<GrassArea>();
 
-        [field: SerializeField] public RandomPointZone RandomPointZone { get; private set; }
+        [field: SerializeField] public RandoinPointZone RandomPointZone { get; private set; }
 
         [SerializeField] GrassArea _grassAreaPrefab;
 

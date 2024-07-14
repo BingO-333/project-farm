@@ -20,6 +20,9 @@ namespace Game
         [SerializeField] Image _loadingImageFill;
         [SerializeField] TextMeshProUGUI _costDisplay;
 
+        [SerializeField] PompAnimation _pompAnimation;
+        [SerializeField] RectTransform _wave;
+
         private Coroutine _interactingCoroutine;
 
         private Tweener _interactFillTweener;
@@ -86,12 +89,32 @@ namespace Game
             _isLoading = true;
 
             _loadingFillTweener.KillIfActiveAndPlaying();
-            _loadingFillTweener = _loadingImageFill.DOFillAmount(1f, _loadingDuration).SetEase(Ease.Linear);
+            _loadingFillTweener = DOVirtual.Float(0, 1f, _loadingDuration, v => {
+                _loadingImageFill.fillAmount = v;
+
+                Vector3 wavePos = Vector3.zero;
+                wavePos.y = Mathf.Lerp(-1f, 1f, v);
+                wavePos.x = Mathf.Lerp(-4f, 4f, v);
+
+                _wave.localPosition = wavePos;
+            }).SetEase(Ease.Linear);
+
+            _pompAnimation.StartAnimation();
 
             yield return new WaitForSeconds(_loadingDuration);
 
+            _pompAnimation.StopAnimation();
+
             _loadingFillTweener.KillIfActiveAndPlaying();
-            _loadingFillTweener = _loadingImageFill.DOFillAmount(0, 0.1f);
+            _loadingFillTweener = DOVirtual.Float(1f, 0, 0.1f, v => {
+                _loadingImageFill.fillAmount = v;
+
+                Vector3 wavePos = Vector3.zero;
+                wavePos.y = Mathf.Lerp(-1f, 1f, v);
+                wavePos.x = Mathf.Lerp(-2f, 2f, v);
+
+                _wave.localPosition = wavePos;
+            }).SetEase(Ease.Linear);
 
             for (int i = 0; i < _spawnAreaCount; i++)
                 _animalField.TrySpawnGrassArea();

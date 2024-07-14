@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace Game
 {
-    public class RandomPointZone : MonoBehaviour
+    public class RPZ_Quad : RandoinPointZone
     {
         [SerializeField] Vector2 _size = Vector2.one;
 
-        public Vector3 GetRandomPointInArea()
+        public override Vector3 GetRandomPointInArea()
         {
             Vector3 randomPoint = Vector3.zero;
 
@@ -16,7 +16,7 @@ namespace Game
             return transform.TransformPoint(randomPoint);
         }
 
-        public Vector3 GetRandomPointOnBorder()
+        public override Vector3 GetRandomPointOnBorder()
         {
             bool horizontalBorder = Random.Range(0, 2) == 0;
 
@@ -41,7 +41,7 @@ namespace Game
             Matrix4x4 rotationMatrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
             Gizmos.matrix = rotationMatrix;
 
-            Color color = Color.green;
+            Color color = Color.gray;
             color.a = 0.1f;
 
             Gizmos.color = color;

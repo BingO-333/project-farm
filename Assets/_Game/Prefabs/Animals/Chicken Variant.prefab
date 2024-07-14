@@ -67,16 +67,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chicken Variant
       objectReference: {fileID: 0}
-    - target: {fileID: 8359642418741112906, guid: 1e8b9175d46bc514abee1062c2842896,
-        type: 3}
-      propertyPath: _eatingInterval
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8359642418741112906, guid: 1e8b9175d46bc514abee1062c2842896,
-        type: 3}
-      propertyPath: _eatCountForSpawnItem
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e8b9175d46bc514abee1062c2842896, type: 3}
 --- !u!4 &4751800735069095500 stripped

@@ -66,7 +66,7 @@ namespace Game
             {
                 GrassArea grassArea = _animalField.GrassAreas[Random.Range(0, _animalField.GrassAreas.Count)];
 
-                Vector3 randomOffset = Random.onUnitSphere * Random.Range(0, 2f);
+                Vector3 randomOffset = Random.onUnitSphere * Random.Range(1f, 1.3f);
                 randomOffset.y = 0;
 
                 _animator.SetBool(_movingAnimKey, true);
@@ -75,6 +75,8 @@ namespace Game
 
                 if (grassArea != null && grassArea.TryEat())
                 {
+                    LookAtSmooth(grassArea.transform.position, 0.35f);
+
                     _animator.SetBool(_eatingAnimKey, true);
                     yield return new WaitForSeconds(_eatingDuration);
                     _animator.SetBool(_eatingAnimKey, false);
