@@ -24,11 +24,12 @@ namespace Game
         {
             if (collider.TryGetComponent(out ItemModel itemModel))
             {
-                itemModel.DisableCollider();
+                itemModel.OnTake();
 
                 Inventory.AddItem(itemModel.Data);
 
                 itemModel.transform.parent = transform;
+                itemModel.ScaleTo(Vector3.one * 0.3f, 0.35f).SetEase(Ease.OutQuart);
                 itemModel.LocalJumpTo(Vector3.up, 0.35f, 1.5f)
                     .OnComplete(() => Destroy(itemModel.gameObject));
             }

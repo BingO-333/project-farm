@@ -71,7 +71,7 @@ namespace Game
 
         private void TrySpawnAnimal(bool ignoreSaveCount = false)
         {
-            if (_spawnedAnimals.Count < _maxAnimals && _moneyManager.TryTakeMoney(_cost))
+            if (_spawnedAnimals.Count < _maxAnimals)
             {
                 AnimalBehaviour spawnedAnimal = Instantiate(_animalPrefab, transform.position, Quaternion.identity);
                 spawnedAnimal.Setup(_animalField);
@@ -87,17 +87,23 @@ namespace Game
 
         private IEnumerator Interacting(Player player)
         {
-            yield return new WaitUntil(() => player.Movement.IsMoving == false);
+            while (_spawnedAnimals.Count < _maxAnimals)
+            {
+                yield return new WaitUntil(() => player.Movement.IsMoving == false);
 
-            _interactFillTweener.KillIfActiveAndPlaying();
-            _interactFillTweener = _interactImageFill.DOFillAmount(1f, _interactingDuration).SetEase(Ease.Linear);
+                _interactFillTweener.KillIfActiveAndPlaying();
+                _interactFillTweener = _interactImageFill.DOFillAmount(1f, _interactingDuration).SetEase(Ease.Linear);
 
-            yield return new WaitForSeconds(_interactingDuration);
+                yield return new WaitForSeconds(_interactingDuration);
 
-            TrySpawnAnimal();
+                if (_moneyManager.TryTakeMoney(_cost))
+                    TrySpawnAnimal();
 
-            _interactFillTweener.KillIfActiveAndPlaying();
-            _interactFillTweener = _interactImageFill.DOFillAmount(0, 0.1f);
+                _interactFillTweener.KillIfActiveAndPlaying();
+                _interactFillTweener = _interactImageFill.DOFillAmount(0, 0.1f);
+
+                yield return new WaitForSeconds(0.2f);
+            }
         }
     }
 }

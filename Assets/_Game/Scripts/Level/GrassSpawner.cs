@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -9,6 +10,9 @@ namespace Game
 {
     public class GrassSpawner : InteractableZone
     {
+        public event Action OnStartLoading;
+        public event Action OnStopLoading;
+
         [SerializeField] float _interactingDuration = 1.5f;
         [SerializeField] float _loadingDuration = 3f;
         [SerializeField] int _cost = 20;
@@ -87,6 +91,7 @@ namespace Game
         private IEnumerator Loading()
         {
             _isLoading = true;
+            OnStartLoading?.Invoke();
 
             _loadingFillTweener.KillIfActiveAndPlaying();
             _loadingFillTweener = DOVirtual.Float(0, 1f, _loadingDuration, v => {
@@ -120,6 +125,7 @@ namespace Game
                 _animalField.TrySpawnGrassArea();
 
             _isLoading = false;
+            OnStopLoading?.Invoke();
         }
     }
 }
