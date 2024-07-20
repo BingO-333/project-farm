@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2abec9aa6e9289844a0bef9e4465f77d, type: 3}
-  m_Name: Truffle
+  m_Name: Butter
   m_EditorClassIdentifier: 
-  <Cost>k__BackingField: 100
-  <Icon>k__BackingField: {fileID: 21300000, guid: 4c197eafe3230a64f876fde72c0a40f2,
+  <Cost>k__BackingField: 150
+  <Icon>k__BackingField: {fileID: 21300000, guid: d34f14fcbd9b39247a6c39387bfa0d56,
     type: 3}
-  _modelPrefab: {fileID: 2514272571045085106, guid: c5b95007f3ada394aae1c6b16c32c6e5,
+  _modelPrefab: {fileID: 3212308641118998741, guid: 2635152264cf90f40986c44a11d340f5,
     type: 3}
