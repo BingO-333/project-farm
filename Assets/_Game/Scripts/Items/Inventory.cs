@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace Game
 			return Items[itemData];
         }
 
-		public void AddItem(ItemData itemData, int count = 1)
+		[Button] public void AddItem(ItemData itemData, int count = 1)
         {
 			if (Items.ContainsKey(itemData) == false)
 				Items.Add(itemData, 0);

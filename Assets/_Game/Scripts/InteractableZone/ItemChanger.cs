@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +8,9 @@ namespace Game
     public class ItemChanger : InteractableZone
     {
         [SerializeField] Image _fillImage;
+        [SerializeField] Image _iconImage;
         [SerializeField] Transform _spawnContainer;
+        [SerializeField] Transform _inputPoint;
         [Space]
         [SerializeField] ItemData _inItemData;
         [SerializeField] ItemData _outItemData;
@@ -17,6 +20,14 @@ namespace Game
         private Coroutine _gettingItemCoroutine;
 
         private bool _isChanging;
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            _iconImage.sprite = _inItemData.Icon;
+            _fillImage.fillAmount = 0;
+        }
 
         protected override void StartInteract(Player player)
         {
@@ -55,8 +66,16 @@ namespace Game
         {
             yield return new WaitUntil(() => player.Movement.IsMoving == false);
 
-            if (player.Inventory.GetItemsCount(_inItemData) > 0)
+            if (player.Inventory.GetItem(_inItemData))
+            {
+                ItemModel spawnedModel = _inItemData.SpawnItemModel(player.transform.position, Quaternion.identity, transform);
+                spawnedModel.OnTake();
+
+                spawnedModel.ScaleTo(Vector3.one * 0.3f, 0.5f);
+                spawnedModel.JumpTo(_inputPoint.position, 0.5f, 2f).OnComplete(() => Destroy(spawnedModel.gameObject));
+
                 yield return StartCoroutine(Changing());
+            }
         }
 
         private IEnumerator Changing()
