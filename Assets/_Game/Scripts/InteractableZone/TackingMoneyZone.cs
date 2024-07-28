@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace Game
 {
-    public abstract class TackingMoneyZone : InteractableZone
+    public abstract class TackingMoneyZone : InteractableZone, ISaveable
     {
 		public bool AllMoneyTaken => CurrentCost <= 0;
 
@@ -17,9 +17,11 @@ namespace Game
 
 		public int CurrentCost
         {
-            get => PlayerPrefs.GetInt($"{transform.name}_currentCost", GetDefaultCost());
-            protected set => PlayerPrefs.SetInt($"{transform.name}_currentCost", value);
+            get => PlayerPrefs.GetInt($"{GetSaveKey()}_currentCost", GetDefaultCost());
+            protected set => PlayerPrefs.SetInt($"{GetSaveKey()}_currentCost", value);
         }
+
+		[field: SerializeField] public string PrefsBaseTag { get; private set; } = "TackingMoneyZone";
 
         [SerializeField] Cash _cashPrefab;
 
@@ -63,10 +65,10 @@ namespace Game
 				CurrentCost -= takeCount;
 				_moneyManager.TryTakeMoney(takeCount);
 
-				Cash _spawnedCash = Instantiate(_cashPrefab, player.transform.position + Vector3.up * 2 + Random.insideUnitSphere, Random.rotation);
-				_spawnedCash.ScaleTo(Vector3.one * 0.4f);
-				_spawnedCash.JumpTo(TriggerZone.transform.position)
-					.OnComplete(() => Destroy(_spawnedCash.gameObject));
+				Cash spawnedCash = Instantiate(_cashPrefab, player.transform.position + Vector3.up * 2 + Random.insideUnitSphere, Random.rotation);
+				spawnedCash.ScaleTo(Vector3.one * 0.4f);
+				spawnedCash.JumpTo(TriggerZone.transform.position)
+					.OnComplete(() => Destroy(spawnedCash.gameObject));
 
 				takeCount += 5;
 
@@ -81,5 +83,15 @@ namespace Game
 
 		[Button] protected virtual void ResetPorgress() => CurrentCost = GetDefaultCost();
 		[Button] private void Buy() => CurrentCost = 0;
-	}
+
+        public string GetSaveKey()
+        {
+			return transform.name;
+        }
+
+        public void SetSaveKey(string key)
+        {
+			transform.name = key;
+        }
+    }
 }

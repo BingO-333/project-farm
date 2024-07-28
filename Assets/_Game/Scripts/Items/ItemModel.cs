@@ -26,11 +26,15 @@ namespace Game
             _idleAnimation = DOTween.Sequence();
             _idleAnimation
                 .Append(transform
-                    .DOScale(Vector3.one * 1.25f, 0.5f)
+                    .DOScale(Vector3.one, 0.2f)
+                    .ChangeStartValue(Vector3.zero)
+                    .SetEase(Ease.OutBack))
+                .Append(transform
+                    .DOScale(Vector3.one * 1.25f, Random.Range(0.4f, 0.6f))
                     .ChangeStartValue(Vector3.one)
                     .SetLoops(1000, LoopType.Yoyo))
                 .Join(transform
-                    .DORotate(new Vector3(0, 180f, 0), 1f, RotateMode.FastBeyond360)
+                    .DORotate(new Vector3(0, 180f, 0), Random.Range(0.9f, 1.1f), RotateMode.FastBeyond360)
                     .SetLoops(1000, LoopType.Incremental).SetEase(Ease.Linear));
         }
 

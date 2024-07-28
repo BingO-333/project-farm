@@ -8,8 +8,10 @@ using Zenject;
 
 namespace Game
 {
-    public class AnimalSpawnerTrigger : InteractableZone
+    public class AnimalSpawnerTrigger : InteractableZone, ISaveable
     {
+        public string PrefsBaseTag => "AnimalSpawner_";
+
         [SerializeField] float _interactingDuration = 1.5f;
         [SerializeField] int _cost = 20;
         [SerializeField] int _maxAnimals = 10;
@@ -29,8 +31,8 @@ namespace Game
 
         private int _savedSpawnedAnimalsCount
         {
-            get => PlayerPrefs.GetInt("SpawnedAnimals_" + name, 0);
-            set => PlayerPrefs.SetInt("SpawnedAnimals_" + name, value);
+            get => PlayerPrefs.GetInt(GetSaveKey(), 0);
+            set => PlayerPrefs.SetInt(GetSaveKey(), value);
         }
 
         [Inject] MoneyManager _moneyManager;
@@ -48,6 +50,9 @@ namespace Game
 
             _animalsCountDisplay.text = $"{_spawnedAnimals.Count}/{_maxAnimals}";
         }
+
+        public string GetSaveKey() => transform.name;
+        public void SetSaveKey(string key) => transform.name = key;
 
         protected override void StartInteract(Player player)
         {
@@ -104,7 +109,7 @@ namespace Game
 
                 yield return new WaitForSeconds(0.2f);
             }
-        }
+        }        
     }
 }
 

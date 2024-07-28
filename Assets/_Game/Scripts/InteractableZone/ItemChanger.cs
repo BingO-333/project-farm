@@ -7,6 +7,8 @@ namespace Game
 {
     public class ItemChanger : InteractableZone
     {
+        [field: SerializeField] public UpgradeLevel Upgrades { get; private set; }
+
         [SerializeField] Image _fillImage;
         [SerializeField] Image _iconImage;
         [SerializeField] Transform _spawnContainer;
@@ -66,19 +68,28 @@ namespace Game
         {
             yield return new WaitUntil(() => player.Movement.IsMoving == false);
 
-            if (player.Inventory.GetItem(_inItemData))
+            int itemCount = Mathf.Clamp(Upgrades.Level + 1, 0, player.Inventory.GetItemsCount(_inItemData));
+            
+            if (itemCount > 0)
             {
-                ItemModel spawnedModel = _inItemData.SpawnItemModel(player.transform.position, Quaternion.identity, transform);
-                spawnedModel.OnTake();
+                player.Inventory.GetItem(_inItemData, itemCount);
 
-                spawnedModel.ScaleTo(Vector3.one * 0.3f, 0.5f);
-                spawnedModel.JumpTo(_inputPoint.position, 0.5f, 2f).OnComplete(() => Destroy(spawnedModel.gameObject));
+                for (int i = 0; i < itemCount; i++)
+                {
+                    ItemModel spawnedModel = _inItemData.SpawnItemModel(player.transform.position, Quaternion.identity, transform);
+                    spawnedModel.OnTake();
 
-                yield return StartCoroutine(Changing());
+                    spawnedModel.ScaleTo(Vector3.one * 0.3f, 0.5f);
+                    spawnedModel.JumpTo(_inputPoint.position, 0.5f, 2f).OnComplete(() => Destroy(spawnedModel.gameObject));
+
+                    yield return new WaitForSeconds(0.2f);
+                }
+
+                yield return StartCoroutine(Changing(itemCount));
             }
         }
 
-        private IEnumerator Changing()
+        private IEnumerator Changing(int itemsCount)
         {
             _isChanging = true;
 
@@ -90,7 +101,9 @@ namespace Game
 
             _fillImage.fillAmount = 0;
 
-            SpawnItem();
+            for (int i = 0; i < itemsCount; i++)
+                SpawnItem();
+
             _isChanging = false;
         }
     }

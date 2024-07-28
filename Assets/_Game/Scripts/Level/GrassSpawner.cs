@@ -13,10 +13,11 @@ namespace Game
         public event Action OnStartLoading;
         public event Action OnStopLoading;
 
+        [field: SerializeField] public UpgradeLevel Upgrades { get; private set; }
+
         [SerializeField] float _interactingDuration = 1.5f;
         [SerializeField] float _loadingDuration = 3f;
-        [SerializeField] int _cost = 20;
-        [SerializeField] int _spawnAreaCount = 3;
+        [SerializeField] int _baseCost = 10;
         [Space]
         [SerializeField] AnimalField _animalField;
         [Space]
@@ -34,13 +35,16 @@ namespace Game
 
         private bool _isLoading;
 
+        private int _currentCost => (Upgrades.Level + 1) * _baseCost;
+
         [Inject] MoneyManager _moneyManager;
 
         protected override void Awake()
         {
             base.Awake();
 
-            _costDisplay.text = _cost.ToString();
+            Upgrades.OnLevelUp += UpdateCostDisplay;
+            UpdateCostDisplay();
 
             _interactImageFill.fillAmount = 0;
             _loadingImageFill.fillAmount = 0;
@@ -51,7 +55,7 @@ namespace Game
             if (_isLoading)
                 return;
 
-            if (_moneyManager.Money < _cost)
+            if (_moneyManager.Money < _currentCost)
                 return;
 
             if (_interactingCoroutine != null)
@@ -72,6 +76,11 @@ namespace Game
             _interactFillTweener = _interactImageFill.DOFillAmount(0, 0.1f);
         }
 
+        private void UpdateCostDisplay()
+        {
+            _costDisplay.text = _currentCost.ToString();
+        }
+
         private IEnumerator Interacting(Player player)
         {
             yield return new WaitUntil(() => player.Movement.IsMoving == false);
@@ -81,14 +90,14 @@ namespace Game
 
             yield return new WaitForSeconds(_interactingDuration);
 
-            if (_moneyManager.TryTakeMoney(_cost))
-                yield return StartCoroutine(Loading());
+            if (_moneyManager.TryTakeMoney(_currentCost))
+                yield return StartCoroutine(Loading((Upgrades.Level + 1)));
 
             _interactFillTweener.KillIfActiveAndPlaying();
             _interactFillTweener = _interactImageFill.DOFillAmount(0, 0.1f);
         }
 
-        private IEnumerator Loading()
+        private IEnumerator Loading(int grassCount)
         {
             _isLoading = true;
             OnStartLoading?.Invoke();
@@ -121,7 +130,7 @@ namespace Game
                 _wave.localPosition = wavePos;
             }).SetEase(Ease.Linear);
 
-            for (int i = 0; i < _spawnAreaCount; i++)
+            for (int i = 0; i < grassCount; i++)
                 _animalField.TrySpawnGrassArea();
 
             _isLoading = false;
