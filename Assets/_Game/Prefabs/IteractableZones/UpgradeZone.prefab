@@ -48,10 +48,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <TriggerZone>k__BackingField: {fileID: 3488068303518832313}
+  <PrefsBaseTag>k__BackingField: UpgradeZone_
   _cashPrefab: {fileID: 6263304801168892204, guid: 567acaf75fd2fcb4b9782cf3ff34ede1,
     type: 3}
   <DefaultCost>k__BackingField: 500
-  <PrefsBaseTag>k__BackingField: UpgradeZone_
   _tackingMoneyProgressView: {fileID: 6131397856312201560}
 --- !u!114 &1031370410551275160
 MonoBehaviour:
@@ -178,7 +178,7 @@ PrefabInstance:
     - target: {fileID: 8362182766329781043, guid: 38faf99305121f943afa9087d76be677,
         type: 3}
       propertyPath: m_text
-      value: Level 1
+      value: Level 2
       objectReference: {fileID: 0}
     - target: {fileID: 8362182766329781043, guid: 38faf99305121f943afa9087d76be677,
         type: 3}

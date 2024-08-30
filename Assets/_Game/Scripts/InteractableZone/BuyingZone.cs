@@ -11,15 +11,17 @@ namespace Game
         [SerializeField] TackingMoneyProgressView _tackingMoneyProgressView;
 		[SerializeField] GameObject _unlockedObj;
 
-        private void Start()
+        protected override void Awake()
         {
-			_unlockedObj.SetActive(AllMoneyTaken);
+            base.Awake();
 
-			_tackingMoneyProgressView.gameObject.SetActive(!AllMoneyTaken);
+            _unlockedObj.SetActive(AllMoneyTaken);
 
-			OnCostChanged += UpdateCostDisplay;
-			UpdateCostDisplay();
-		}
+            _tackingMoneyProgressView.gameObject.SetActive(!AllMoneyTaken);
+
+            OnCostChanged += UpdateCostDisplay;
+            UpdateCostDisplay();
+        }
 
         protected override void StartInteract(Player player)
         {
@@ -36,11 +38,11 @@ namespace Game
 			base.MoneyTaken();
 
 			_unlockedObj.SetActive(true);
-			_unlockedObj.transform.DOScale(Vector3.one, 0.25f)
-				.ChangeStartValue(new Vector3(1, 0, 1))
-				.SetEase(Ease.OutBack);
+            _unlockedObj.transform.DOScale(Vector3.one, 0.25f)
+                .ChangeStartValue(new Vector3(1, 0, 1))
+                .SetEase(Ease.OutBack);
 
-			_tackingMoneyProgressView.Hide();
+            _tackingMoneyProgressView.Hide();
 
 			/*VibroManager.Instance.Call(VibroType.NotificationSuccess);
 			SFXManager.Instance.BuyObject.Play();*/

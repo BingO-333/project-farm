@@ -11,7 +11,9 @@ namespace Game
 		public event Action<ItemData> OnAllSell;
 
 		[SerializeField] Image _iconImage;
-		[SerializeField] TextMeshProUGUI _nameCountDisplay;
+		[SerializeField] TextMeshProUGUI _nameDisplay;
+		[SerializeField] TextMeshProUGUI _countDisplay;
+		[SerializeField] TextMeshProUGUI _costOneItemDisplay;
 
 		private ItemData _savedItemData;
 
@@ -20,7 +22,9 @@ namespace Game
 			_savedItemData = itemData;
 
 			_iconImage.sprite = itemData.Icon;
-			_nameCountDisplay.text = $"{itemData.name} x {count.ToStringWithAbbreviations()}";
+			_nameDisplay.text = itemData.name;
+			_countDisplay.text = "x " + count.ToStringWithAbbreviations();
+			_costOneItemDisplay.text = itemData.Cost.ToStringWithAbbreviations();
 
 			OnOneSell = oneSell;
 			OnAllSell = allSell;

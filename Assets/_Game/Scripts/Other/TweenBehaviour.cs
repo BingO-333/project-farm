@@ -82,5 +82,17 @@ namespace Game
             return _rotateTween = transform.DOLocalRotate(angles, duration, rotateMode);
         }
 
+        public Tween MoveAlongPath(Vector3[] path, float duration = 0.2f, PathType pathType = PathType.CatmullRom, bool lookForwardPath = false, Color? gizmoColor = null)
+        {
+            if (_moveTween.IsActive())
+                _moveTween.Kill();
+
+            if (lookForwardPath)
+                _moveTween = transform.DOPath(path, duration, pathType: pathType, gizmoColor: gizmoColor).SetLookAt(0.01f);
+            else
+                _moveTween = transform.DOPath(path, duration, pathType: pathType, gizmoColor: gizmoColor);
+
+            return _moveTween;
+        }
     }
 }

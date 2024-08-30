@@ -14,7 +14,7 @@ namespace Game
         private Tween _anim;
 
         private void Awake()
-        {
+        {//
             if (_buyingZonesArePurchased)
                 return;
 

@@ -9,6 +9,8 @@ namespace Game
     {
         [field: SerializeField] public UpgradeLevel Upgrades { get; private set; }
 
+        [SerializeField] Transform _model;
+        [Space]
         [SerializeField] Image _fillImage;
         [SerializeField] Image _iconImage;
         [SerializeField] Transform _spawnContainer;
@@ -18,6 +20,8 @@ namespace Game
         [SerializeField] ItemData _outItemData;
         [Space]
         [SerializeField] float _changingDuration = 10f;
+
+        private Tweener _modelAnimTweener;
 
         private Coroutine _gettingItemCoroutine;
 
@@ -93,6 +97,12 @@ namespace Game
         {
             _isChanging = true;
 
+            _modelAnimTweener.KillIfActiveAndPlaying();
+            _modelAnimTweener = _model.DOScale(new Vector3(1, 1.3f, 1f), 0.5f)
+                .ChangeStartValue(Vector3.one)
+                .SetEase(Ease.InOutQuad)
+                .SetLoops(-1, LoopType.Yoyo);
+
             for (float progress = 0; progress < 1f; progress += Time.deltaTime / _changingDuration)
             {
                 _fillImage.fillAmount = progress;
@@ -103,6 +113,9 @@ namespace Game
 
             for (int i = 0; i < itemsCount; i++)
                 SpawnItem();
+
+            _modelAnimTweener.KillIfActiveAndPlaying();
+            _modelAnimTweener = _model.DOScale(Vector3.one, 0.2f);
 
             _isChanging = false;
         }
