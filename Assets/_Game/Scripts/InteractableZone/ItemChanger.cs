@@ -70,8 +70,6 @@ namespace Game
 
         private IEnumerator GettingItem(Player player)
         {
-            yield return new WaitUntil(() => player.Movement.IsMoving == false);
-
             int itemCount = Mathf.Clamp(Upgrades.Level + 1, 0, player.Inventory.GetItemsCount(_inItemData));
             
             if (itemCount > 0)

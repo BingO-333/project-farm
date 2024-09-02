@@ -92,7 +92,7 @@ namespace Game
 
         private IEnumerator Interacting(Player player)
         {
-            while (_spawnedAnimals.Count < _maxAnimals)
+            while (_spawnedAnimals.Count < _maxAnimals && _moneyManager.Money >= _cost)
             {
                 yield return new WaitUntil(() => player.Movement.IsMoving == false);
 
